@@ -10,7 +10,7 @@ const app = express();
 
 const path = require("path");
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname)));
 
 app.use(helmet());
 app.use(cors());
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use("/v1", paymentRoutes);
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Gateway.html"));
+    res.sendFile(path.join(__dirname, "Gateway.html"));
 });
 const PORT = process.env.PORT || 8080;
 

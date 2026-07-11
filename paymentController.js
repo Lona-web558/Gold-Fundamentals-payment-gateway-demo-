@@ -1,7 +1,7 @@
 const {
     createToken,
     tokenStore
-} = require("../services/tokenService");
+} = require("./tokenService");
 
 exports.tokenizeCard = (req, res) => {
 

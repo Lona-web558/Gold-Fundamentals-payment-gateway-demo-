@@ -20,7 +20,7 @@ app.use(express.json());
 app.use("/v1", paymentRoutes);
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+    res.sendFile(path.join(__dirname, "public", "Gateway.html"));
 });
 const PORT = process.env.PORT || 8080;
 

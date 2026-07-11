@@ -5,12 +5,12 @@ const router = express.Router();
 const {
     tokenizeCard,
     chargeCard
-} = require("../controllers/paymentController");
+} = require("./paymentController");
 
 const {
     validateCard,
     validateCharge
-} = require("../middleware/validationMiddleware");
+} = require("./validationMiddleware");
 
 router.post("/tokens", validateCard, tokenizeCard);
 

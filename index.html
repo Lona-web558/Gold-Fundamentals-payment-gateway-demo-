@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Fundamentals Core Gateway (DEMO)</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+
+        #auth {
+            width: 400px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 0 10px gray;
+        }
+
+        input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        #dashboard {
+            margin-top: 30px;
+        }
+
+        .Balance {
+            font-size: 30px;
+            font-weight: bold;
+            color: green;
+        }
+
+        .demo-banner {
+            background: #fff3cd;
+            color: #664d03;
+            border: 1px solid #ffe69c;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body class="bg-light min-vh-100 d-flex align-items-center justify-content-center py-5">
+
+    <div class="container" style="max-width: 480px; width: 100%;">
+
+        <div class="demo-banner">
+            ⚠️ DEMO MODE — No real payments, no real cards. All data stays in your browser only.
+        </div>
+
+        <!-- Authentication Panel (Login / Signup Screen) -->
+        <div id="auth" class="card p-4 shadow border-0 bg-white rounded-3">
+            <h2 class="text-center fw-bold text-primary mb-4">Demo Bank</h2>
+
+            <!-- Modern Nav Pills for Auth Layout Navigation Toggle -->
+            <ul class="nav nav-pills nav-fill gap-2 p-1 small bg-light rounded-pill mb-4" id="authTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active rounded-pill fw-bold" onclick="showLogin()">Login</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link rounded-pill fw-bold" onclick="showSignup()">Sign up</button>
+                </li>
+            </ul>
+
+            <!-- Signup Form Frame -->
+            <div id="signupForm" style="display:none">
+                <div class="form-floating mb-3">
+                    <input type="text" id="signupUser" class="form-control" placeholder="Username">
+                    <label for="signupUser">Username</label>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <input type="password" id="signupPass" class="form-control" placeholder="Password">
+                    <label for="signupPass">Password</label>
+                </div>
+
+                <button class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" onclick="signup()">Create Account</button>
+            </div>
+
+            <!-- Login Form Frame -->
+            <div id="loginForm">
+                <div class="form-floating mb-3">
+                    <input type="text" id="loginUser" class="form-control" placeholder="Username">
+                    <label for="loginUser">Username</label>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <input type="password" id="loginPass" class="form-control" placeholder="Password">
+                    <label for="loginPass">Password</label>
+                </div>
+
+                <button class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <!-- Custom Core Payment Gateway Dashboard (Hidden on Startup) -->
+        <div id="dashboard" class="card p-4 shadow border-0 bg-white rounded-3" style="display:none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fw-bold m-0 text-dark">Welcome</h2>
+                <span id="welcome" class="badge bg-secondary p-2 small font-monospace"></span>
+            </div>
+
+            <!-- Platform Balance Readout Frame -->
+            <div class="bg-light p-3 rounded-3 mb-4 text-center border">
+                <h6 class="text-uppercase tracking-wider text-muted small fw-bold mb-1">Your Balance</h6>
+                <div id="balance" class="Balance display-5 fw-bold text-success">$0.00</div>
+            </div>
+
+            <hr class="my-4 text-muted">
+
+            <!-- Custom Infrastructure Gateway Authorization Elements -->
+            <h4 class="fw-bold text-secondary text-center mb-3">Gold Fundamentals Gateway</h4>
+
+            <form id="gatewayPaymentForm" onsubmit="event.preventDefault();">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="cardholderName" placeholder="J Doe" required>
+                    <label for="cardholderName">Cardholder Name</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="text" id="recipient" class="form-control form-control-lg" placeholder="Recipient name or account" required>
+                    <label for="recipient">Recipient</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="text" id="cardNumber" class="form-control form-control-lg" placeholder="4111 1111 1111 1111" required>
+                    <label for="cardNumber">Card Number</label>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-7">
+                        <label class="form-label text-muted small fw-bold font-monospace">EXPIRATION</label>
+                        <div class="input-group">
+                            <input type="text" id="expMonth" class="form-control text-center" placeholder="MM" maxlength="2" required>
+                            <input type="text" id="expYear" class="form-control text-center" placeholder="YY" maxlength="2" required>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label text-muted small fw-bold font-monospace">SECURITY CODE</label>
+                        <input type="password" id="cvc" class="form-control text-center" placeholder="CVC" maxlength="3" required>
+                    </div>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <input id="amount" type="number" class="form-control fw-bold text-success" value="500" min="1" required>
+                    <label for="amount">Transaction Amount ($)</label>
+                </div>
+
+                <!-- Custom JavaScript submission trigger anchor -->
+                <button type="button" id="submitBtn" class="btn btn-dark btn-lg w-100 fw-bold shadow-sm" onclick="pay()">
+                    Authorize Payment
+                </button>
+            </form>
+
+            <!-- Core Status Notification Block -->
+            <div id="message" class="my-3"></div>
+
+            <hr class="my-4 text-muted">
+
+            <!-- Portal Termination Trigger Link -->
+            <button class="btn btn-outline-danger w-100 fw-bold border-2" onclick="logout()">Logout</button>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let currentUser = null;
+
+        function showLogin() {
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("signupForm").style.display = "none";
+        }
+        showLogin();
+
+        function showSignup() {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("signupForm").style.display = "block";
+        }
+
+        function getUsers() {
+            return JSON.parse(localStorage.getItem("Users") || "{}");
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem("Users", JSON.stringify(users));
+        }
+
+        function signup() {
+            let user = document.getElementById("signupUser").value.trim();
+            let pass = document.getElementById("signupPass").value;
+
+            if (user === "" || pass === "") {
+                window.alert("Details are empty. Fill out details first.");
+                return;
+            }
+
+            let users = getUsers();
+            if (users[user]) {
+                window.alert("That username is already taken.");
+                return;
+            }
+
+            users[user] = { password: pass, balance: 2500 };
+            saveUsers(users);
+
+            window.alert("Account created. You can now log in.");
+            document.getElementById("signupUser").value = "";
+            document.getElementById("signupPass").value = "";
+            showLogin();
+        }
+
+        function login() {
+            let user = document.getElementById("loginUser").value.trim();
+            let pass = document.getElementById("loginPass").value;
+
+            let users = getUsers();
+
+            if (users[user] && users[user].password === pass) {
+                currentUser = user;
+
+                document.getElementById("auth").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+                document.getElementById("welcome").innerText = user;
+
+                loadBalance();
+            } else {
+                window.alert("Invalid username or password.");
+            }
+        }
+
+        function loadBalance() {
+            let users = getUsers();
+            let balance = users[currentUser] ? users[currentUser].balance : 0;
+            document.getElementById("balance").innerText = "$" + Number(balance).toFixed(2);
+        }
+
+        function pay() {
+            let recipient = document.getElementById("recipient").value.trim();
+            let amount = document.getElementById("amount").value;
+
+            if (recipient === "" || amount === "") {
+                window.alert("Fill out the details.");
+                return;
+            }
+
+            amount = Number(amount);
+
+            let users = getUsers();
+            let balance = users[currentUser] ? users[currentUser].balance : 0;
+
+            if (amount <= 0) {
+                window.alert("Enter an amount greater than 0.");
+                return;
+            }
+
+            if (amount > balance) {
+                window.alert("Insufficient funds.");
+                return;
+            }
+
+            balance = balance - amount;
+            users[currentUser].balance = balance;
+            saveUsers(users);
+
+            document.getElementById("balance").innerText = "$" + balance.toFixed(2);
+
+            document.getElementById("message").innerHTML =
+                "<div class='alert alert-success'>Fake payment of <b>$" +
+                amount.toFixed(2) +
+                "</b> sent to <b>" +
+                recipient +
+                "</b>. (Demo only — no real funds moved.)</div>";
+
+            document.getElementById("recipient").value = "";
+            document.getElementById("amount").value = "";
+            document.getElementById("cardNumber").value = "";
+            document.getElementById("expMonth").value = "";
+            document.getElementById("expYear").value = "";
+            document.getElementById("cvc").value = "";
+        }
+
+        function logout() {
+            currentUser = null;
+
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("auth").style.display = "block";
+
+            document.getElementById("loginUser").value = "";
+            document.getElementById("loginPass").value = "";
+            document.getElementById("message").innerHTML = "";
+        }
+    </script>
+</body>
+</html>

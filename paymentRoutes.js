@@ -10,7 +10,7 @@ const {
 const {
     validateCard,
     validateCharge
-} = require("./validationMiddleware");
+} = require("./validationMiddelware");
 
 router.post("/tokens", validateCard, tokenizeCard);
 
